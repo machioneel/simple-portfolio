@@ -9,6 +9,7 @@ interface Props {
 const { variant } = Astro.props;
 const isSidebar = variant === 'sidebar';
 
+// Membuat ID unik untuk masing-masing varian (mobile & sidebar)
 const modalId = `cv-modal-${variant}`;
 const captchaModalId = `captcha-modal-${variant}`;
 ---
@@ -64,6 +65,7 @@ const captchaModalId = `captcha-modal-${variant}`;
     <div class="mt-4 max-w-prose space-y-3 text-lg leading-relaxed text-slate">
       <p>{site.hero.tagline}</p>
       <p>{site.hero.contact}</p>
+      
       <div class="mt-6 flex justify-center">
         <button 
           data-modal-target={modalId} 
@@ -77,6 +79,7 @@ const captchaModalId = `captcha-modal-${variant}`;
           RESUME
         </button>
       </div>
+
     </div>
     <div class="mt-2 mb-6 flex items-center justify-center gap-4">
       <ContactBar />
@@ -86,7 +89,7 @@ const captchaModalId = `captcha-modal-${variant}`;
 
 <dialog 
   id={captchaModalId} 
-  class="m-auto rounded-xl border border-neutral-800 bg-neutral-950 p-6 shadow-2xl text-white outline-none focus:outline-none backdrop:bg-neutral-900/80 backdrop:backdrop-blur-sm"
+  class="captcha-dialog m-auto rounded-xl border border-neutral-800 bg-neutral-950 p-6 shadow-2xl text-white outline-none focus:outline-none backdrop:bg-neutral-900/80 backdrop:backdrop-blur-sm no-scrollbar"
 >
   <h3 class="mb-4 text-lg font-semibold">Security Check</h3>
   <p class="mb-2 text-sm text-neutral-400">Masukkan 6 angka berikut untuk melihat CV:</p>
@@ -108,12 +111,12 @@ const captchaModalId = `captcha-modal-${variant}`;
 
 <dialog 
   id={modalId} 
-  class="cv-dialog relative m-auto w-[85vw] max-w-4xl h-[88vh] rounded-xl border border-neutral-800 bg-neutral-950 p-0 shadow-2xl overflow-hidden outline-none focus:outline-none focus-visible:outline-none"
+  class="cv-dialog relative m-auto w-[85vw] max-w-4xl h-[88vh] rounded-xl border border-neutral-800 bg-neutral-950 p-0 shadow-2xl overflow-hidden outline-none focus:outline-none focus-visible:outline-none no-scrollbar"
 >
   <a 
     href={site.hero.resumeUrl} 
     download
-    class="absolute bottom-6 right-6 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-800/90 border border-neutral-600 text-white shadow-xl backdrop-blur-md transition-all hover:bg-neutral-700 hover:scale-105"
+    class="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-800/90 border border-neutral-600 text-white shadow-xl backdrop-blur-md transition-all hover:bg-neutral-700 hover:scale-105 cursor-pointer"
     title="Download CV"
   >
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -123,98 +126,115 @@ const captchaModalId = `captcha-modal-${variant}`;
     </svg>
   </a>
 
-  <div class="w-full h-full overflow-hidden">
+  <div class="w-full h-full overflow-hidden bg-neutral-950 flex flex-col justify-center items-center relative no-scrollbar">
     <iframe 
-      src={`${site.hero.resumeUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-      class="border-none outline-none block" 
-      style="width: calc(100% + 17px); height: 100%;"
+      data-pdf-url={site.hero.resumeUrl}
+      data-prod-url={`${site.url}${site.hero.resumeUrl}`}
+      class="cv-iframe h-full border-none outline-none block z-10 no-scrollbar"
+      style="width: calc(100% + 24px); margin-right: -24px;"
       title="CV PDF Viewer"
     ></iframe>
+    <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+      <p class="text-sm text-neutral-500 mb-3">Memuat dokumen PDF...</p>
+      <a href={site.hero.resumeUrl} target="_blank" class="text-xs text-neutral-400 underline hover:text-white z-20">Buka langsung di tab baru jika gagal memuat</a>
+    </div>
   </div>
 </dialog>
 
 <script>
-  const btns = document.querySelectorAll('.cv-btn');
-  const dialogs = document.querySelectorAll<HTMLDialogElement>('.cv-dialog');
-  
-  let activeCvModal: HTMLDialogElement | null = null;
-  let activeCaptchaModal: HTMLDialogElement | null = null;
-  let currentCaptchaCode = '';
+  function setupCVModals() {
+    const cvBtns = document.querySelectorAll('.cv-btn');
+    
+    cvBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cvTargetId = btn.getAttribute('data-modal-target');
+        const captchaTargetId = btn.getAttribute('data-captcha-target');
+        
+        if (!cvTargetId || !captchaTargetId) return;
 
-  function generateCaptcha(displayEl: HTMLDivElement, inputEl: HTMLInputElement) {
-    currentCaptchaCode = Math.floor(100000 + Math.random() * 900000).toString();
-    displayEl.textContent = currentCaptchaCode;
-    inputEl.value = '';
+        const targetCvModal = document.getElementById(cvTargetId) as HTMLDialogElement;
+        const captchaModal = document.getElementById(captchaTargetId) as HTMLDialogElement;
+
+        if (!targetCvModal || !captchaModal) return;
+
+        const display = captchaModal.querySelector('.captcha-display') as HTMLDivElement;
+        const input = captchaModal.querySelector('.captcha-input') as HTMLInputElement;
+        const verifyBtn = captchaModal.querySelector('.verify-captcha') as HTMLButtonElement;
+        const cancelBtn = captchaModal.querySelector('.cancel-captcha') as HTMLButtonElement;
+
+        if (!display || !input || !verifyBtn || !cancelBtn) return;
+
+        let currentCode = Math.floor(100000 + Math.random() * 900000).toString();
+        display.textContent = currentCode;
+        input.value = '';
+        
+        captchaModal.showModal();
+        setTimeout(() => input.focus(), 100);
+
+        const handleVerify = () => {
+          if (input.value === currentCode) {
+            captchaModal.close();
+            
+            const iframe = targetCvModal.querySelector('.cv-iframe') as HTMLIFrameElement;
+            if (iframe && !iframe.src) {
+              const pdfUrl = iframe.getAttribute('data-pdf-url') || '';
+              const prodUrl = iframe.getAttribute('data-prod-url') || '';
+              
+              if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                iframe.src = `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`;
+              } else {
+                iframe.src = `https://docs.google.com/gview?url=${encodeURIComponent(prodUrl)}&embedded=true`;
+              }
+            }
+            
+            targetCvModal.showModal();
+          } else {
+            alert('Kode Captcha tidak sesuai. Silakan coba lagi.');
+            currentCode = Math.floor(100000 + Math.random() * 900000).toString();
+            display.textContent = currentCode;
+            input.value = '';
+            input.focus();
+          }
+        };
+
+        verifyBtn.onclick = handleVerify;
+        input.onkeypress = (e) => { if (e.key === 'Enter') handleVerify(); };
+        cancelBtn.onclick = () => captchaModal.close();
+      });
+    });
+
+    // Menutup dialog saat klik area backdrop
+    document.querySelectorAll('dialog').forEach(dialog => {
+      dialog.onclick = (e: MouseEvent) => {
+        const rect = dialog.getBoundingClientRect();
+        const isInDialog = (
+          rect.top <= e.clientY &&
+          e.clientY <= rect.top + rect.height &&
+          rect.left <= e.clientX &&
+          e.clientX <= rect.left + rect.width
+        );
+        if (!isInDialog) {
+          dialog.close();
+        }
+      };
+    });
   }
 
-  // 1. Inisialisasi klik tombol View CV
-  btns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const cvTargetId = btn.getAttribute('data-modal-target');
-      const captchaTargetId = btn.getAttribute('data-captcha-target');
-      
-      if (cvTargetId && captchaTargetId) {
-        activeCvModal = document.getElementById(cvTargetId) as HTMLDialogElement;
-        activeCaptchaModal = document.getElementById(captchaTargetId) as HTMLDialogElement;
-        
-        const displayEl = activeCaptchaModal.querySelector('.captcha-display') as HTMLDivElement;
-        const inputEl = activeCaptchaModal.querySelector('.captcha-input') as HTMLInputElement;
-        
-        generateCaptcha(displayEl, inputEl);
-        activeCaptchaModal.showModal();
-        
-        setTimeout(() => inputEl.focus(), 100);
-      }
-    });
-  });
-
-  // 2. Pasang event listener untuk semua instance modal captcha
-  const captchaModals = document.querySelectorAll<HTMLDialogElement>('dialog[id^="captcha-modal-"]');
-  
-  captchaModals.forEach(modal => {
-    const inputEl = modal.querySelector('.captcha-input') as HTMLInputElement;
-    const verifyBtn = modal.querySelector('.verify-captcha') as HTMLButtonElement;
-    const cancelBtn = modal.querySelector('.cancel-captcha') as HTMLButtonElement;
-    const displayEl = modal.querySelector('.captcha-display') as HTMLDivElement;
-
-    const verifyAction = () => {
-      if (inputEl.value === currentCaptchaCode) {
-        modal.close();
-        activeCvModal?.showModal();
-      } else {
-        alert('Kode Captcha tidak sesuai. Silakan coba lagi.');
-        generateCaptcha(displayEl, inputEl);
-        inputEl.focus();
-      }
-    };
-
-    verifyBtn.addEventListener('click', verifyAction);
-    
-    inputEl.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') verifyAction();
-    });
-
-    cancelBtn.addEventListener('click', () => modal.close());
-  });
-
-  // 3. Tutup modal CV dengan klik area luar (backdrop)
-  dialogs.forEach(dialog => {
-    dialog.addEventListener('click', (e: MouseEvent) => {
-      const rect = dialog.getBoundingClientRect();
-      const isInDialog = (
-        rect.top <= e.clientY &&
-        e.clientY <= rect.top + rect.height &&
-        rect.left <= e.clientX &&
-        e.clientX <= rect.left + rect.width
-      );
-      if (!isInDialog) {
-        dialog.close();
-      }
-    });
-  });
+  // Inisialisasi awal dan sinkronisasi transisi halaman Astro (ViewTransitions)
+  setupCVModals();
+  document.addEventListener('astro:page-load', setupCVModals);
 </script>
 
 <style>
+  /* Aturan mutlak hilangkan scrollbar di semua browser */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none !important;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
   dialog:focus-visible, dialog:focus {
     outline: none;
   }
@@ -230,14 +250,8 @@ const captchaModalId = `captcha-modal-${variant}`;
   }
 
   @keyframes popUp {
-    from {
-      transform: scale(0.9);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
   }
 
   @keyframes fadeIn {
