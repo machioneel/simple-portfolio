@@ -25,22 +25,43 @@ const defaultTheme = `${baseTheme}-dark`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-     
+    
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={site.meta.keywords} />
+    <meta name="author" content={site.hero.name} />
     <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:image" content={new URL(site.meta.ogImage, site.url)} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(site.meta.ogImage, site.url)} />
+    
     <ClientRouter />
 
-    <!-- THEME INITIALIZATION SCRIPT -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": site.hero.name,
+      "url": site.url,
+      "jobTitle": "Full-Stack Developer & IT Support",
+      "image": new URL(site.hero.avatarSrc, site.url),
+      "sameAs": [
+        site.contact.github,
+        site.contact.linkedin
+      ]
+    })} />
+
     <script is:inline define:vars={{ baseTheme, defaultTheme }}>
       function applyTheme() {
         const savedTheme = localStorage.getItem('theme');
-
         if (savedTheme && savedTheme.startsWith(baseTheme)) {
           document.documentElement.setAttribute('data-theme', savedTheme);
         } else {
@@ -48,11 +69,7 @@ const defaultTheme = `${baseTheme}-dark`;
           localStorage.setItem('theme', defaultTheme);
         }
       }
-
-      // Apply theme on initial load
       applyTheme();
-
-      // Re-apply theme after navigation (for view transitions)
       document.addEventListener('astro:page-load', applyTheme);
     </script>
   </head>

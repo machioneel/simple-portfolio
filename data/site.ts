@@ -9,10 +9,13 @@
  */
 
 export const site = {
-  url: 'https://aprastyo.my.id', // [cite: 2]
+  url: 'https://aprastyo.my.id',
   meta: {
-    title: 'Agung Prastyo | Jobless', // [cite: 1, 12]
-    description: 'Portfolio of Agung Prastyo: AI-Augmented Web Development, IT Support, and Cybersecurity.', // [cite: 1, 5, 53, 55]
+    title: 'Agung Prastyo | Full-Stack Developer & IT Support', // Lebih SEO-friendly
+    description: 'Portfolio of Agung Prastyo: AI-Augmented Web Development, IT Support, and Cybersecurity.',
+    // Tambahkan 2 baris ini:
+    keywords: 'Agung Prastyo, Web Developer, Full-Stack Developer, IT Support, React.js, Supabase, Vibe Coding',
+    ogImage: '/project-01.webp', // Gambar thumbnail saat link dibagikan
   },
   hero: {
     name: 'Agung Prastyo', // [cite: 1]
