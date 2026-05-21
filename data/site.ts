@@ -21,6 +21,7 @@ export const site = {
     contact: 'Open to roles leveraging 5 years of IT Support and modern AI-augmented web development.', // [cite: 5]
     avatarSrc: '/favicon.svg',
     avatarAlt: 'Agung Prastyo', // [cite: 1]
+    resumeUrl: '/resume.pdf', // [cite: 2]
   },
   about: {
     paragraphs: [
