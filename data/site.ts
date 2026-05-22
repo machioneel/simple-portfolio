@@ -11,20 +11,19 @@
 export const site = {
   url: 'https://aprastyo.my.id',
   meta: {
-    title: 'Agung Prastyo | Full-Stack Developer & IT Support', // Lebih SEO-friendly
-    description: 'Portfolio of Agung Prastyo: AI-Augmented Web Development, IT Support, and Cybersecurity.',
-    // Tambahkan 2 baris ini:
-    keywords: 'Agung Prastyo, Web Developer, Full-Stack Developer, IT Support, React.js, Supabase, Vibe Coding',
-    ogImage: '/project-01.webp', // Gambar thumbnail saat link dibagikan
+    title: 'Agung Prastyo | Full-Stack Developer & IT Support Jakarta',
+    description: 'Portfolio profesional Agung Prastyo: Pembangunan Web Berbantuan AI, Sokongan IT (IT Support), dan Keselamatan Siber di Jakarta.',
+    keywords: 'Agung Prastyo, JANDA-BAPAS, MONALISA, Web Developer Jakarta, Full-Stack Developer, IT Support Jakarta, React.js, Supabase, Vibe Coding, Linux Mint',
+    ogImage: '/project-01.webp',
   },
   hero: {
-    name: 'Agung Prastyo', // [cite: 1]
-    role: 'Jobless', // [cite: 12]
-    tagline: 'Leveraging technical skills and analytical abilities in System Architecture, Web Development, and IT Support.', // [cite: 6]
-    contact: 'Open to roles leveraging 5 years of IT Support and modern AI-augmented web development.', // [cite: 5]
+    name: 'Agung Prastyo',
+    role: 'Full-Stack Developer & IT Support', // Menggantikan 'Jobless' dengan kata kunci industri
+    tagline: 'Leveraging technical skills and analytical abilities in System Architecture, Web Development, and IT Support based in Jakarta.',
+    contact: 'Open to roles leveraging 5 years of IT Support and modern AI-augmented web development.',
     avatarSrc: '/favicon.svg',
-    avatarAlt: 'Agung Prastyo', // [cite: 1]
-    resumeUrl: '/resume.pdf', // [cite: 2]
+    avatarAlt: 'Agung Prastyo',
+    resumeUrl: '/resume.pdf',
   },
   about: {
     paragraphs: [

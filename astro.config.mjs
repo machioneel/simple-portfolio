@@ -4,7 +4,7 @@ import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://aprastyo.my.id', // Wajib untuk sitemap dan meta tag canonical
+  site: 'https://aprastyo.my.id',
   output: 'static',
   vite: {
     plugins: [tailwindcss()],
@@ -15,6 +15,17 @@ export default defineConfig({
         ph: ['*'],
       },
     }), 
-    sitemap()
+    sitemap({
+      serialize(item) {
+        if (item.url === 'https://aprastyo.my.id/') {
+          item.changefreq = 'weekly';
+          item.priority = 1.0;
+        } else {
+          item.changefreq = 'monthly';
+          item.priority = 0.8;
+        }
+        return item;
+      },
+    })
   ],
 });
