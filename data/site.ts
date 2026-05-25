@@ -30,7 +30,7 @@ export const site = {
       'Graduate in Informatics Engineering from Universitas Budi Luhur with certifications from Google (IT Support), Fortinet (Cybersecurity), and IBM (Cybersecurity).', // [cite: 4]
       'Strong understanding of IT Support backed by 5 years of daily hands-on practice in hardware/software troubleshooting and asset management, combined with expertise in AI-Augmented Web Development via vibe coding.', // [cite: 5]
       {
-        heading: 'Example focus areas',
+        heading: 'My focus areas',
         bullets: [
           'Designing centralized digital platforms to accelerate transparency and efficiency.', // [cite: 16]
           'Building dynamic Role-Based Access Control (RBAC) and automated document tracking.', // [cite: 18, 19]
@@ -38,7 +38,7 @@ export const site = {
         ],
       },
       {
-        heading: 'Sample stack',
+        heading: 'My Stack',
         techItems: ['React.js', 'TypeScript', 'Supabase', 'Tailwind CSS', 'Vibe Coding', 'Linux'], // [cite: 52, 54]
       },
     ],

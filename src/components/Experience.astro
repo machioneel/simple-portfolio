@@ -1,69 +1,546 @@
 ---
 import { site } from '../../data/site';
+
+const experiences = [...site.experiences];
 ---
 
-<section id="experiences" class="mb-24 scroll-mt-24 lg:mb-32 lg:scroll-mt-8" aria-labelledby="experience-heading">
+<section
+  id="experiences"
+  class="mb-12 scroll-mt-24 lg:mb-16 lg:scroll-mt-8"
+  aria-labelledby="experience-heading"
+>
   <h2 id="experience-heading" class="section-heading">Experiences</h2>
-  <div class="space-y-4">
-    {
-      site.experiences.map((item) => (
-        <article class="scroll-stat panel-card group grid gap-4 md:grid-cols-[9rem_1fr] md:gap-6">
-          <p class="pt-1 font-mono text-xs uppercase tracking-wider text-slate">{item.period}</p>
-          <div class="space-y-3">
-            <h3 class="text-base font-semibold text-slate uppercase">
-              {item.title} · {item.company}
+
+  <div class="exp-scene mt-8">
+
+    <div class="exp-stage" id="expStage">
+      {experiences.map((item, i) => (
+        <div
+          class={`exp-card ${i === 0 ? 'is-active' : i === 1 ? 'is-next' : 'is-hidden'}`}
+          data-index={i}
+          role="button"
+          tabindex={i === 0 ? '0' : '-1'}
+          aria-label={`${item.company} — click to go to next`}
+        >
+          <!-- click hint overlay on active card -->
+          <div class="exp-click-hint" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+            next
+          </div>
+
+          <div class="exp-card-inner">
+            <p class="exp-period">{item.period}</p>
+            <h3 class="exp-title">
+              {item.title}
+              <span class="exp-company"> · {item.company}</span>
             </h3>
-            <p class="body-copy">{item.summary}</p>
-            <ul class="list-disc space-y-1 pl-5 text-sm text-slate">
-              {item.highlights.map((point) => <li>{point}</li>)}
+            <p class="exp-summary">{item.summary}</p>
+            <ul class="exp-highlights">
+              {item.highlights.map((h) => <li>{h}</li>)}
             </ul>
-            <ul class="flex flex-wrap gap-3 pt-1">
-              {item.tech.map((tech) => <li class="font-mono text-xs text-accent">{tech}</li>)}
+            <ul class="exp-tech">
+              {item.tech.map((t) => <li>{t}</li>)}
             </ul>
           </div>
-        </article>
-      ))
-    }
+        </div>
+      ))}
+    </div>
+
+    <!-- Controls -->
+    <div class="exp-controls">
+      <button class="exp-ctrl-btn" id="expPrev" type="button" aria-label="Previous">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+
+      <div class="exp-dots" id="expDots">
+        {experiences.map((_, i) => (
+          <button
+            class={`exp-dot ${i === 0 ? 'active' : ''}`}
+            data-index={i}
+            type="button"
+            aria-label={`Experience ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      <button class="exp-ctrl-btn" id="expNext" type="button" aria-label="Next">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+
   </div>
 </section>
 
 <style>
-  .scroll-stat {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  /* ── Scene ── */
+  .exp-scene {
+    perspective: 1000px;
+    perspective-origin: 50% 40%;
   }
 
-  .scroll-stat.reveal {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  /* ── Desktop: stacked 3D ── */
+  .exp-stage {
+    position: relative;
+    width: 100%;
+    height: 400px;
   }
+
+  .exp-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    border: 1px solid #facc15;
+    background: rgb(15, 12, 10); /* ← solid, tidak tembus */
+    overflow: hidden;
+    transition:
+      transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1),
+      opacity   0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    will-change: transform, opacity;
+    outline: none;
+  }
+
+  /* ── Card states ── */
+  .exp-card.is-active {
+    transform: rotateY(0deg) translateZ(0);
+    opacity: 1;
+    z-index: 3;
+    cursor: pointer;
+  }
+
+  .exp-card.is-active:hover .exp-click-hint {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .exp-card.is-next {
+    transform: rotateY(-16deg) translateX(5%) translateZ(-55px) scale(0.96);
+    opacity: 0.3;
+    z-index: 2;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .exp-card.is-prev {
+    transform: rotateY(16deg) translateX(-5%) translateZ(-55px) scale(0.96);
+    opacity: 0.3;
+    z-index: 2;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .exp-card.is-hidden {
+    transform: rotateY(-28deg) translateX(10%) translateZ(-110px) scale(0.88);
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* exit / enter animation classes */
+  .exp-card.exit-left {
+    transform: rotateY(85deg) translateX(-50%) translateZ(-60px) scale(0.85);
+    opacity: 0;
+    z-index: 4;
+  }
+
+  .exp-card.exit-right {
+    transform: rotateY(-85deg) translateX(50%) translateZ(-60px) scale(0.85);
+    opacity: 0;
+    z-index: 4;
+  }
+
+  .exp-card.enter-right {
+    transform: rotateY(-85deg) translateX(50%) translateZ(-60px) scale(0.85);
+    opacity: 0;
+    transition: none;
+    z-index: 3;
+  }
+
+  .exp-card.enter-left {
+    transform: rotateY(85deg) translateX(-50%) translateZ(-60px) scale(0.85);
+    opacity: 0;
+    transition: none;
+    z-index: 3;
+  }
+
+  /* ── Click hint badge ── */
+  .exp-click-hint {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: monospace;
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #facc15;
+    background: rgba(250, 204, 21, 0.08);
+    border: 1px solid rgba(250, 204, 21, 0.3);
+    border-radius: 9999px;
+    padding: 0.25rem 0.6rem;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+  }
+
+  /* ── Card content ── */
+  .exp-card-inner {
+    height: 100%;
+    overflow-y: auto;
+    padding: 1.75rem 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(250, 204, 21, 0.2) transparent;
+  }
+
+  .exp-card-inner::-webkit-scrollbar       { width: 4px; }
+  .exp-card-inner::-webkit-scrollbar-track { background: transparent; }
+  .exp-card-inner::-webkit-scrollbar-thumb { background: rgba(250, 204, 21, 0.2); border-radius: 2px; }
+
+  .exp-period {
+    font-family: monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #facc15;
+    opacity: 0.75;
+  }
+
+  .exp-title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #e2e8f0;
+    line-height: 1.4;
+  }
+
+  .exp-company { color: #facc15; }
+
+  .exp-summary {
+    font-size: 0.875rem;
+    color: #c9b99a;
+    line-height: 1.65;
+  }
+
+  .exp-highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .exp-highlights li {
+    font-size: 0.8125rem;
+    color: #c9b99a;  /* sudah ada, tapi mungkin ter-override */
+    padding-left: 1.1rem;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .exp-highlights li::before {
+    content: '▹';
+    position: absolute;
+    left: 0;
+    color: #facc15;
+    font-size: 0.7rem;
+    top: 0.15em;
+  }
+
+  .exp-tech {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+    padding-top: 0.25rem;
+  }
+
+  .exp-tech li {
+    font-family: monospace;
+    font-size: 0.6875rem;
+    color: #facc15;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Controls ── */
+  .exp-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .exp-ctrl-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+    background: transparent;
+    color: #facc15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  }
+
+  .exp-ctrl-btn:hover {
+    background: rgba(250, 204, 21, 0.1);
+    border-color: rgba(250, 204, 21, 0.6);
+    transform: scale(1.08);
+  }
+
+  .exp-dots {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .exp-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.25s, transform 0.25s, border-color 0.25s;
+  }
+
+  .exp-dot.active {
+    background: #facc15;
+    border-color: #facc15;
+    transform: scale(1.3);
+  }
+
+  /* ══════════════════════════════
+     MOBILE — 3D flip sama seperti desktop
+     tapi disesuaikan untuk layar sempit
+  ══════════════════════════════ */
+  @media (max-width: 640px) {
+  .exp-scene {
+    perspective: 700px;
+    perspective-origin: 50% 40%;
+  }
+
+  .exp-stage {
+    height: 480px;
+  }
+
+  .exp-card {
+    position: absolute;
+    inset: 0;
+    /* background solid agar kartu belakang tidak tembus */
+    background: rgb(15, 12, 10);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition:
+      transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1),
+      opacity   0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+  }
+
+  /* sembunyikan kartu non-aktif sepenuhnya di mobile */
+  .exp-card.is-next,
+  .exp-card.is-prev,
+  .exp-card.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* is-next & is-prev tetap ada transformnya untuk animasi transisi */
+  .exp-card.is-next {
+    transform: rotateY(-12deg) translateX(4%) translateZ(-40px) scale(0.95);
+  }
+
+  .exp-card.is-prev {
+    transform: rotateY(12deg) translateX(-4%) translateZ(-40px) scale(0.95);
+  }
+
+  .exp-card.is-hidden {
+    transform: rotateY(-22deg) translateX(8%) translateZ(-80px) scale(0.88);
+  }
+
+  .exp-card.exit-left {
+    transform: rotateY(70deg) translateX(-40%) translateZ(-50px) scale(0.85);
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .exp-card.exit-right {
+    transform: rotateY(-70deg) translateX(40%) translateZ(-50px) scale(0.85);
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .exp-card.enter-right {
+    transform: rotateY(-70deg) translateX(40%) translateZ(-50px) scale(0.85);
+    opacity: 0;
+    transition: none;
+    visibility: visible;
+  }
+
+  .exp-card.enter-left {
+    transform: rotateY(70deg) translateX(-40%) translateZ(-50px) scale(0.85);
+    opacity: 0;
+    transition: none;
+    visibility: visible;
+  }
+
+  /* kartu aktif selalu visible */
+  .exp-card.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .exp-card-inner {
+    height: 100%;
+    overflow-y: auto;
+    padding: 1.25rem 1.25rem 1rem;
+  }
+
+  .exp-click-hint { display: none; }
+}
 </style>
 
 <script>
-  function revealCards() {
-    const cards = document.querySelectorAll('.scroll-stat');
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const index = Array.from(cards).indexOf(entry.target);
-          setTimeout(() => {
-            entry.target.classList.add('reveal');
-          }, (index % 3) * 150); 
-          
-          observer.unobserve(entry.target);
+  function initExpCards() {
+    const stageRaw   = document.getElementById('expStage');
+    const prevBtnRaw = document.getElementById('expPrev');
+    const nextBtnRaw = document.getElementById('expNext');
+    const dots       = Array.from(document.querySelectorAll<HTMLElement>('.exp-dot'));
+
+    if (!stageRaw) return;
+
+    const stage   = stageRaw as HTMLElement;
+    const prevBtn = prevBtnRaw as HTMLButtonElement | null;
+    const nextBtn = nextBtnRaw as HTMLButtonElement | null;
+    const cards   = Array.from(stage.querySelectorAll<HTMLElement>('.exp-card'));
+    const total   = cards.length;
+
+    let current   = 0;
+    let animating = false;
+
+    /* ── wrap index ── */
+    function wrap(idx: number): number {
+      return ((idx % total) + total) % total;
+    }
+
+    /* ── update dots ── */
+    function updateDots(idx: number) {
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    /* ── apply 3D state classes (desktop & mobile pakai fungsi yang sama) ── */
+    function applyStates(activeIdx: number) {
+      cards.forEach((card, i) => {
+        card.classList.remove('is-active', 'is-next', 'is-prev', 'is-hidden');
+        card.setAttribute('tabindex', '-1');
+
+        const rel = ((i - activeIdx) % total + total) % total;
+        if      (rel === 0)         { card.classList.add('is-active'); card.setAttribute('tabindex', '0'); }
+        else if (rel === 1)         card.classList.add('is-next');
+        else if (rel === total - 1) card.classList.add('is-prev');
+        else                        card.classList.add('is-hidden');
+      });
+
+      updateDots(activeIdx);
+    }
+
+    /* ── 3D transition (sama untuk desktop & mobile) ── */
+    function goTo(nextIdx: number, dir: 'next' | 'prev') {
+      const idx = wrap(nextIdx);
+      if (idx === current || animating) return;
+      animating = true;
+
+      const outCard = cards[current];
+      const inCard  = cards[idx];
+
+      // set enter position tanpa transisi
+      inCard.classList.remove('is-active', 'is-next', 'is-prev', 'is-hidden');
+      inCard.classList.add(dir === 'next' ? 'enter-right' : 'enter-left');
+      void inCard.offsetWidth; // force reflow
+
+      // mulai transisi keluar
+      outCard.classList.remove('is-active');
+      outCard.classList.add(dir === 'next' ? 'exit-left' : 'exit-right');
+
+      // masuk ke posisi aktif
+      inCard.classList.remove('enter-right', 'enter-left');
+      inCard.classList.add('is-active');
+
+      outCard.addEventListener('transitionend', () => {
+        outCard.classList.remove('exit-left', 'exit-right');
+        current = idx;
+        applyStates(current);
+        animating = false;
+      }, { once: true });
+
+      updateDots(idx);
+    }
+
+    /* ── Active card click = go next ── */
+    cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        if (card.classList.contains('is-active')) {
+          goTo(current + 1, 'next');
         }
       });
-    }, {
-      threshold: 0.15,
-      rootMargin: '0px 0px -10px 0px'
+
+      card.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (card.classList.contains('is-active')) {
+            goTo(current + 1, 'next');
+          }
+        }
+      });
     });
 
-    cards.forEach(card => observer.observe(card));
+    nextBtn?.addEventListener('click', () => goTo(current + 1, 'next'));
+    prevBtn?.addEventListener('click', () => goTo(current - 1, 'prev'));
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        if (i === current) return;
+        goTo(i, i > current ? 'next' : 'prev');
+      });
+    });
+
+    /* ── Swipe ── */
+    let touchStartX = 0;
+    stage.addEventListener('touchstart', (e: TouchEvent) => {
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    stage.addEventListener('touchend', (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) {
+        dx < 0 ? goTo(current + 1, 'next') : goTo(current - 1, 'prev');
+      }
+    }, { passive: true });
+
+    /* ── Init ── */
+    applyStates(0);
   }
 
-  revealCards();
-  
-  document.addEventListener('astro:after-swap', revealCards);
+  initExpCards();
+  document.addEventListener('astro:after-swap', initExpCards);
 </script>

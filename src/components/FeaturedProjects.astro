@@ -8,31 +8,476 @@ interface Props {
 }
 
 const { projects } = Astro.props;
+
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
+
 const archiveHref = `${base}projects`;
+
+// Collect all unique tech items across all projects
+const allTech = Array.from(
+  new Set(
+    projects.flatMap((p) =>
+      p.techCategories.flatMap((cat) => cat.items)
+    )
+  )
+);
+
+// Map tech names → devicon class
+const deviconMap: Record<string, string> = {
+  'JavaScript':                 'devicon-javascript-plain colored',
+  'TypeScript':                 'devicon-typescript-plain colored',
+  'Python':                     'devicon-python-plain colored',
+  'PHP':                        'devicon-php-plain colored',
+  'Java':                       'devicon-java-plain colored',
+  'Go':                         'devicon-go-plain colored',
+  'Rust':                       'devicon-rust-plain',
+  'C#':                         'devicon-csharp-plain colored',
+  'C++':                        'devicon-cplusplus-plain colored',
+  'HTML':                       'devicon-html5-plain colored',
+  'CSS':                        'devicon-css3-plain colored',
+  'React':                      'devicon-react-original colored',
+  'React.js':                   'devicon-react-original colored',
+  'Next.js':                    'devicon-nextjs-plain',
+  'Vue':                        'devicon-vuejs-plain colored',
+  'Vue.js':                     'devicon-vuejs-plain colored',
+  'Angular':                    'devicon-angularjs-plain colored',
+  'Svelte':                     'devicon-svelte-plain colored',
+  'Astro':                      'devicon-astro-plain',
+  'Laravel':                    'devicon-laravel-plain colored',
+  'Django':                     'devicon-django-plain colored',
+  'Flask':                      'devicon-flask-original',
+  'Express':                    'devicon-express-original',
+  'Express.js':                 'devicon-express-original',
+  'NestJS':                     'devicon-nestjs-plain colored',
+  'FastAPI':                    'devicon-fastapi-plain colored',
+  'Spring':                     'devicon-spring-plain colored',
+  'Tailwind':                   'devicon-tailwindcss-plain colored',
+  'Tailwind CSS':               'devicon-tailwindcss-plain colored',
+  'Bootstrap':                  'devicon-bootstrap-plain colored',
+  'MySQL':                      'devicon-mysql-plain colored',
+  'PostgreSQL':                 'devicon-postgresql-plain colored',
+  'MongoDB':                    'devicon-mongodb-plain colored',
+  'Redis':                      'devicon-redis-plain colored',
+  'SQLite':                     'devicon-sqlite-plain colored',
+  'Supabase':                   'devicon-supabase-plain colored',
+  'Firebase':                   'devicon-firebase-plain colored',
+  'Docker':                     'devicon-docker-plain colored',
+  'Kubernetes':                 'devicon-kubernetes-plain colored',
+  'Git':                        'devicon-git-plain colored',
+  'GitHub':                     'devicon-github-original',
+  'GitLab':                     'devicon-gitlab-plain colored',
+  'Linux':                      'devicon-linux-plain',
+  'Ubuntu':                     'devicon-ubuntu-plain colored',
+  'Nginx':                      'devicon-nginx-original colored',
+  'AWS':                        'devicon-amazonwebservices-plain colored',
+  'Google Cloud':               'devicon-googlecloud-plain colored',
+  'Azure':                      'devicon-azure-plain colored',
+  'Vercel':                     'devicon-vercel-plain',
+  'Figma':                      'devicon-figma-plain colored',
+  'Vite':                       'devicon-vitejs-plain colored',
+  'GraphQL':                    'devicon-graphql-plain colored',
+  'Prisma':                     'devicon-prisma-original',
+  'VS Code':                    'devicon-vscode-plain colored',
+  'CRUD':                       'devicon-github-original',
+  'Vibe Coding':                'devicon-vscode-plain colored',
+  'AI Extraction':              'devicon-python-plain colored',
+  'OCR':                        'devicon-opencv-plain colored',
+  'RBAC':                       'devicon-linux-plain',
+  'Real-time Monitoring':       'devicon-grafana-original colored',
+  'Relational Database Design': 'devicon-postgresql-plain colored',
+};
+
+const techItems = allTech.map((name) => ({
+  name,
+  icon: deviconMap[name] ?? 'devicon-devicon-plain',
+}));
 ---
 
 <section
   id="featured-projects"
-  class="mb-20 scroll-mt-24 lg:mb-28 lg:scroll-mt-8"
+  class="featured-projects-section mb-20 scroll-mt-24 lg:mb-28 lg:scroll-mt-8"
   aria-labelledby="projects-heading"
 >
-  <h2 id="projects-heading" class="section-heading">Featured Projects</h2>
-  <div class="space-y-20">
-    {projects.map((project) => (
-      <ProjectCard project={project} imageSrc={project.image ? `${base}${project.image}` : undefined} />
-    ))}
+  <div class="mb-8 flex items-center justify-between">
+    <h2 id="projects-heading" class="section-heading">
+      Featured Projects
+    </h2>
+
+    <button
+      class="pause-btn hidden md:flex"
+      id="pauseBtn"
+      aria-label="Pause or play auto-scroll"
+    >
+      <Icon name="ph:pause-bold" class="btn-icon pause-icon" />
+      <Icon name="ph:play-bold" class="btn-icon play-icon hidden" />
+    </button>
   </div>
+
+  <!-- ── Tech stack marquee — scrolls RIGHT to LEFT reversed (left→right) ── -->
+  <div class="tech-outer" aria-hidden="true">
+    <div class="tech-track" id="techTrack">
+      {[...techItems, ...techItems].map(({ name, icon }) => (
+        <div class="tech-pill">
+          <i class={`${icon} tech-icon`}></i>
+          <span class="tech-name">{name}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- ── Project cards marquee — scrolls left ── -->
+  <div class="marquee-outer" id="marqueeOuter">
+    <div class="marquee-track" id="marqueeTrack">
+      {projects.map((project, index) => (
+        <div class="project-slide" data-index={index}>
+          <ProjectCard
+            project={project}
+            imageSrc={project.image ? `${base}${project.image}` : undefined}
+          />
+        </div>
+      ))}
+      {projects.map((project, index) => (
+        <div class="project-slide" data-index={index} aria-hidden="true">
+          <ProjectCard
+            project={project}
+            imageSrc={project.image ? `${base}${project.image}` : undefined}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+
   <p class="mt-14">
     <a
       href={archiveHref}
-      class="group flex items-center gap-2 text-sm text-accent transition hover:text-slate-light"
+      class="group inline-flex items-center gap-2 text-sm text-accent transition hover:text-slate-light"
       data-astro-prefetch
     >
       View Full Project Archive
-      <Icon name="ph:arrow-right" class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+      <Icon
+        name="ph:arrow-right"
+        class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+      />
     </a>
   </p>
 </section>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+/>
+
+<style>
+  .featured-projects-section {
+    position: relative;
+  }
+
+  /* ════════════════════════════════
+     Tech strip (reversed direction)
+  ════════════════════════════════ */
+  .tech-outer {
+    overflow: hidden;
+    margin-bottom: 1.75rem;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%, black 8%, black 92%, transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%, black 8%, black 92%, transparent 100%
+    );
+  }
+
+  .tech-track {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: max-content;
+    padding: 0.5rem 0;
+    will-change: transform;
+  }
+
+  .tech-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    flex-shrink: 0;
+    white-space: nowrap;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+  }
+
+  .tech-pill:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .tech-icon {
+    font-size: 1.125rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .tech-name {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: #94a3b8;
+    letter-spacing: 0.01em;
+  }
+
+  /* ════════════════════════════════
+     Cards marquee
+  ════════════════════════════════ */
+  .marquee-outer {
+    overflow: hidden;
+    padding: 1rem 0 3.5rem;
+    cursor: grab;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%, black 6%, black 94%, transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%, black 6%, black 94%, transparent 100%
+    );
+  }
+
+  .marquee-outer.is-dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  .marquee-track {
+    display: flex;
+    align-items: stretch;
+    gap: 1rem;
+    width: max-content;
+    will-change: transform;
+  }
+
+  .project-slide {
+    width: min(60vw, 380px);
+    flex-shrink: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .project-slide:hover {
+    transform: scale(1.05) translateY(-10px);
+    z-index: 10;
+  }
+
+  .marquee-outer.is-dragging .project-slide {
+    transform: none !important;
+    transition: none;
+  }
+
+  /* ── Pause/Play button ── */
+  .pause-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 9999px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(20, 20, 24, 0.85);
+    color: #94a3b8;
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .pause-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    border-color: rgba(96, 165, 250, 0.4);
+    color: #e2e8f0;
+  }
+
+  .pause-btn:active { transform: scale(0.96); }
+
+  .btn-icon  { width: 1.1rem; height: 1.1rem; }
+  .hidden    { display: none !important; }
+
+  /* ── Responsive ── */
+  @media (max-width: 1024px) {
+    .project-slide { width: min(70vw, 340px); }
+    .marquee-track { gap: 0.875rem; }
+  }
+
+  @media (max-width: 768px) {
+    .marquee-outer {
+      padding: 0.75rem 0 2.5rem;
+      -webkit-mask-image: linear-gradient(
+        to right, transparent 0%, black 4%, black 96%, transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right, transparent 0%, black 4%, black 96%, transparent 100%
+      );
+    }
+    .marquee-track  { gap: 0.75rem; }
+    .project-slide  { width: 72vw; }
+    .project-slide:hover { transform: scale(1.02) translateY(-5px); }
+    .tech-pill      { padding: 0.25rem 0.55rem; }
+    .tech-icon      { font-size: 1rem; }
+  }
+</style>
+
+<script>
+  function initAll() {
+
+    /* ─────────────────────────────────────────
+       Helper: create a simple JS marquee loop
+       dir: -1 = scroll left (cards), +1 = scroll right (tech)
+    ───────────────────────────────────────── */
+    function createMarquee(
+      el: HTMLElement,
+      speed: number,
+      dir: 1 | -1
+    ): { pause: () => void; resume: () => void } {
+      let offset = dir === 1 ? -(el.scrollWidth / 2) : 0;
+      let paused = false;
+
+      function half(): number { return el.scrollWidth / 2; }
+
+      function tick() {
+        if (!paused) {
+          offset += speed * dir;
+
+          if (dir === -1 && offset < -half()) offset += half();
+          if (dir ===  1 && offset >= 0)      offset -= half();
+
+          el.style.transform = `translateX(${offset}px)`;
+        }
+        requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+      window.addEventListener('resize', () => { /* half() recalculates live */ });
+
+      return {
+        pause:  () => { paused = true;  },
+        resume: () => { paused = false; },
+      };
+    }
+
+    /* ── Tech strip (dir +1 = left→right) ── */
+    const techEl = document.getElementById('techTrack');
+    if (techEl) createMarquee(techEl, 0.45, 1);
+
+    /* ── Cards (dir -1 = right→left) ── */
+    const cardElRaw   = document.getElementById('marqueeTrack');
+    const outerRaw    = document.getElementById('marqueeOuter');
+    const pauseBtn    = document.getElementById('pauseBtn');
+
+    // Early return if required elements are missing
+    if (!cardElRaw || !outerRaw) return;
+
+    // Cast to HTMLElement so TypeScript is happy inside nested functions
+    const cardEl: HTMLElement = cardElRaw;
+    const outer: HTMLElement  = outerRaw;
+
+    const cardMarquee = createMarquee(cardEl, 0.7, -1);
+
+    /* Pause / Play button */
+    const pauseIcon = pauseBtn?.querySelector('.pause-icon') as HTMLElement | null;
+    const playIcon  = pauseBtn?.querySelector('.play-icon')  as HTMLElement | null;
+    let isPaused = false;
+
+    pauseBtn?.addEventListener('click', () => {
+      isPaused = !isPaused;
+      isPaused ? cardMarquee.pause() : cardMarquee.resume();
+      pauseIcon?.classList.toggle('hidden', isPaused);
+      playIcon?.classList.toggle('hidden', !isPaused);
+      pauseBtn.setAttribute('aria-label', isPaused ? 'Play auto-scroll' : 'Pause auto-scroll');
+    });
+
+    /* ── Drag to scroll ── */
+    let dragging     = false;
+    let didDrag      = false;
+    let dragStartX   = 0;
+    let dragStartOff = 0;
+    let velX         = 0;
+    let lastX        = 0;
+    let lastT        = 0;
+
+    let offset = 0;
+    const SPEED = 0.7;
+
+    function half(): number { return cardEl.scrollWidth / 2; }
+    function wrapCard(x: number): number {
+      const h = half();
+      let v = x % h;
+      if (v > 0) v -= h;
+      return v;
+    }
+
+    // Override the cardMarquee tick with a drag-aware version
+    cardMarquee.pause();
+    function cardTick() {
+      if (!dragging && !isPaused) {
+        offset = wrapCard(offset - SPEED);
+      }
+      cardEl.style.transform = `translateX(${offset}px)`;
+      requestAnimationFrame(cardTick);
+    }
+    requestAnimationFrame(cardTick);
+
+    function onDragStart(clientX: number) {
+      dragging     = true;
+      didDrag      = false;
+      dragStartX   = clientX;
+      dragStartOff = offset;
+      lastX        = clientX;
+      lastT        = Date.now();
+      velX         = 0;
+      outer.classList.add('is-dragging');
+    }
+
+    function onDragMove(clientX: number) {
+      if (!dragging) return;
+      const dx = clientX - dragStartX;
+      if (Math.abs(dx) > 3) didDrag = true;
+      const now = Date.now();
+      velX  = (clientX - lastX) / Math.max(now - lastT, 1);
+      lastX = clientX;
+      lastT = now;
+      offset = wrapCard(dragStartOff + dx);
+    }
+
+    function onDragEnd() {
+      if (!dragging) return;
+      dragging = false;
+      outer.classList.remove('is-dragging');
+      let v = velX * 14;
+      function momentum() {
+        if (Math.abs(v) < 0.25) return;
+        v      *= 0.91;
+        offset  = wrapCard(offset + v);
+        cardEl.style.transform = `translateX(${offset}px)`;
+        requestAnimationFrame(momentum);
+      }
+      requestAnimationFrame(momentum);
+    }
+
+    outer.addEventListener('mousedown',  (e: MouseEvent)  => onDragStart(e.clientX));
+    window.addEventListener('mousemove', (e: MouseEvent)  => onDragMove(e.clientX));
+    window.addEventListener('mouseup',   ()               => onDragEnd());
+
+    outer.addEventListener('touchstart', (e: TouchEvent) => onDragStart(e.touches[0].clientX), { passive: true });
+    window.addEventListener('touchmove', (e: TouchEvent) => onDragMove(e.touches[0].clientX),  { passive: true });
+    window.addEventListener('touchend',  ()              => onDragEnd());
+
+    outer.addEventListener('click', (e: MouseEvent) => {
+      if (didDrag) { e.preventDefault(); e.stopPropagation(); didDrag = false; }
+    }, true);
+  }
+
+  initAll();
+  document.addEventListener('astro:after-swap', initAll);
+</script>

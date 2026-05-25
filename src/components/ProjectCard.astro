@@ -1,126 +1,391 @@
 ---
 import type { FeaturedProject } from '../../data/site';
-import { Icon } from 'astro-icon/components'; // Tambahkan import Icon
+import { Icon } from 'astro-icon/components';
 
 interface Props {
-  project: FeaturedProject & { demoLink?: string }; // Menambahkan referensi tipe opsional
+  project: FeaturedProject & { demoLink?: string };
   imageSrc?: string;
 }
 
 const { project, imageSrc: imageOverride } = Astro.props;
 
 const techCategories = project.techCategories;
-const imageSrc = imageOverride ?? (project.image ? (project.image.startsWith('/') ? project.image : `/${project.image}`) : undefined);
+const imageSrc = imageOverride ?? (
+  project.image
+    ? (project.image.startsWith('/') ? project.image : `/${project.image}`)
+    : undefined
+);
 ---
 
-<article class="scroll-stat panel-card group space-y-6">
-  <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-    <div>
-      <h3 class="text-2xl font-semibold text-slate">
-        {project.title}
-      </h3>
-      {project.period && <p class="mt-1 font-mono text-sm text-accent">{project.period}</p>}
-    </div>
-    
-    {/* Tombol Demo Link Render Kondisional */}
-    {project.demoLink && (
-      <a
-        href={project.demoLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="group inline-flex shrink-0 items-center gap-2 rounded-full border border-slate-700/50 bg-slate-800/30 px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-slate-700/50 hover:text-slate-light"
-      >
-        Live Demo
-        <Icon name="ph:arrow-up-right" class="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-      </a>
+<article class="scroll-stat card-3d panel-card group">
+  <div class="card-inner">
+
+    <div class="card-glow"></div>
+
+    <!-- Header: title + demo btn -->
+    <header class="card-header">
+      <div class="card-title-wrap">
+        <h3 class="card-title">
+          {project.title}
+        </h3>
+
+        {project.period && (
+          <p class="card-period">
+            {project.period}
+          </p>
+        )}
+      </div>
+
+      {project.demoLink && (
+        <a
+          href={project.demoLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="demo-btn"
+        >
+          Demo
+          <Icon name="ph:arrow-up-right" class="demo-icon" />
+        </a>
+      )}
+    </header>
+
+    <!-- Image -->
+    {imageSrc && (
+      <div class="image-wrapper">
+        <img
+          src={imageSrc}
+          alt={project.imageAlt ?? ''}
+          class="project-image"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     )}
-  </header>
 
-  {imageSrc && (
-    <div class="w-full max-w-3xl overflow-hidden rounded-xl">
-      <img
-        src={imageSrc}
-        alt={project.imageAlt ?? ''}
-        class="h-56 w-full object-cover"
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-  )}
+    <!-- Summary -->
+    <p class="card-summary">{project.summary}</p>
 
-  <div class="space-y-4">
-    <p class="body-copy">{project.summary}</p>
-
+    <!-- Solution & Impact -->
     {project.solution && (
-      <div>
-        <dt class="text-xs uppercase tracking-wider text-accent">Solution</dt>
-        <dd class="mt-1.5 text-slate">{project.solution}</dd>
+      <div class="card-meta">
+        <span class="meta-label">Solution</span>
+        <span class="meta-value">{project.solution}</span>
       </div>
     )}
-    {project.impact && (
-      <div>
-        <dt class="text-xs uppercase tracking-wider text-accent">Impact</dt>
-        <dd class="mt-1.5 text-slate">{project.impact}</dd>
-      </div>
-    )}
-  </div>
 
-  <div>
-    <dt class="mb-3 text-xs uppercase tracking-wider text-accent">Technologies / Tools</dt>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {techCategories.map((techCat) => (
-        <div>
-          <h4 class="mb-2 text-xs uppercase tracking-wider text-slate-lightest">
-            {techCat.category}
-          </h4>
-          <ul class="space-y-1">
-            {techCat.items.map((item) => (
-              <li class="text-sm text-slate-light">{item}</li>
-            ))}
-          </ul>
-        </div>
+    {project.impact && (
+      <div class="card-meta">
+        <span class="meta-label">Impact</span>
+        <span class="meta-value">{project.impact}</span>
+      </div>
+    )}
+
+    <!-- Tech tags -->
+    <div class="tags-wrap">
+      {techCategories.flatMap((cat) => cat.items).slice(0, 6).map((item) => (
+        <span class="tag">{item}</span>
       ))}
     </div>
+
   </div>
 </article>
 
 <style>
-  .scroll-stat {
+  /* ── Card shell ── */
+  .card-3d {
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1400px;
+    border-radius: 1rem;
+    overflow: hidden;
+    height: 100%;
+
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(24px) scale(0.95);
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.5s ease;
   }
 
-  .scroll-stat.reveal {
+  .card-3d.reveal {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+
+  /* ── Inner surface ── */
+  .card-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 1rem 1.125rem;
+    border-radius: 1rem;
+    height: 100%;
+
+    background: linear-gradient(
+      135deg,
+      rgba(18, 18, 20, 0.96),
+      rgba(28, 28, 32, 0.94)
+    );
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    backdrop-filter: blur(16px);
+    transform-style: preserve-3d;
+
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .card-3d:hover .card-inner {
+    border-color: rgba(96, 165, 250, 0.35);
+    box-shadow:
+      0 16px 40px rgba(0, 0, 0, 0.45),
+      0 0 28px rgba(56, 189, 248, 0.1);
+  }
+
+  /* ── Glow ── */
+  .card-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--x, 50%) var(--y, 50%),
+      rgba(56, 189, 248, 0.13),
+      transparent 35%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  .card-3d:hover .card-glow {
+    opacity: 1;
+  }
+
+  /* ── Header ── */
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .card-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .card-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .card-period {
+    font-family: monospace;
+    font-size: 0.6875rem;
+    color: #64b5f6;
+    margin: 0;
+  }
+
+  /* ── Demo button ── */
+  .demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(100, 181, 246, 0.3);
+    background: rgba(100, 181, 246, 0.08);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: #64b5f6;
+    text-decoration: none;
+    transform: translateZ(40px);
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .demo-btn:hover {
+    background: rgba(100, 181, 246, 0.18);
+    border-color: rgba(100, 181, 246, 0.55);
+    color: #e2e8f0;
+  }
+
+  .demo-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  /* ── Image ── */
+  .image-wrapper {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.625rem;
+    transform: translateZ(25px);
+    transition: transform 0.3s ease;
+  }
+
+  .card-3d:hover .image-wrapper {
+    transform: translateZ(40px) scale(1.01);
+  }
+
+  .project-image {
+    width: 100%;
+    height: 7.5rem;
+    object-fit: cover;
+    display: block;
+    transition:
+      transform 0.5s ease,
+      filter 0.4s ease;
+  }
+
+  .card-3d:hover .project-image {
+    transform: scale(1.05);
+    filter: brightness(1.06);
+  }
+
+  /* ── Summary ── */
+  .card-summary {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    line-height: 1.55;
+    margin: 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Meta rows ── */
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .meta-label {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #64b5f6;
+    font-weight: 500;
+  }
+
+  .meta-value {
+    font-size: 0.6875rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Tech tags ── */
+  .tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: auto;
+    padding-top: 0.375rem;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.625rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .tag:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
   }
 </style>
 
 <script>
+  function init3DCard() {
+    const cards = document.querySelectorAll(
+      '.card-3d'
+    ) as NodeListOf<HTMLDivElement>;
+
+    cards.forEach((card) => {
+      const inner = card.querySelector(
+        '.card-inner'
+      ) as HTMLDivElement | null;
+
+      const glow = card.querySelector(
+        '.card-glow'
+      ) as HTMLDivElement | null;
+
+      if (!inner || !glow) return;
+
+      card.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+
+        inner.style.transform = `
+          rotateX(${((y - cy) / cy) * -7}deg)
+          rotateY(${((x - cx) / cx) * 7}deg)
+          translateZ(6px)
+        `;
+
+        glow.style.setProperty('--x', `${x}px`);
+        glow.style.setProperty('--y', `${y}px`);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        inner.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
+      });
+    });
+  }
+
   function revealCards() {
     const cards = document.querySelectorAll('.scroll-stat');
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const index = Array.from(cards).indexOf(entry.target);
-          setTimeout(() => {
-            entry.target.classList.add('reveal');
-          }, (index % 3) * 150); 
-          
-          observer.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.15,
-      rootMargin: '0px 0px -10px 0px'
-    });
 
-    cards.forEach(card => observer.observe(card));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Array.from(cards).indexOf(entry.target);
+            setTimeout(() => {
+              entry.target.classList.add('reveal');
+            }, (index % 3) * 150);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -10px 0px' }
+    );
+
+    cards.forEach((card) => observer.observe(card));
   }
 
   revealCards();
-  
-  document.addEventListener('astro:after-swap', revealCards);
+  init3DCard();
+
+  document.addEventListener('astro:after-swap', () => {
+    revealCards();
+    init3DCard();
+  });
 </script>

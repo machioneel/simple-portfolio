@@ -17,69 +17,395 @@ const paragraphs = site.about.paragraphs as readonly AboutParagraph[];
 
 <section
   id="about"
-  class="mb-24 scroll-mt-24 lg:mb-32 lg:scroll-mt-8"
+  class="mb-12 scroll-mt-24 lg:mb-16 lg:scroll-mt-8"
   aria-labelledby="about-heading"
 >
   <h2 id="about-heading" class="section-heading">About</h2>
-  <div class="reveal-content mt-8 grid items-start gap-10">
-    <div class="space-y-8 body-copy">
-      {paragraphs.map((p) =>
-        typeof p === 'string' ? (
-          <p>{p}</p>
-        ) : (
-          <>
-            {'text' in p && p.text !== undefined && (
-              <p>
-                {p.text}
-                {p.link && (
-                  <a href={p.link.href} class="subtle-link text-accent" target="_blank" rel="noreferrer">
-                    {p.link.text}
-                  </a>
-                )}
-                {'textAfter' in p && p.textAfter}
-              </p>
-            )}
-            {p.heading && (
-              <div class="space-y-2">
-                <p class="font-semibold text-white-soft">{p.heading}</p>
 
-                {p.bullets && (
-                  <ul class="list-disc space-y-1 pl-5">
-                    {p.bullets.map((bullet) => (
-                      <li>{bullet}</li>
-                    ))}
-                  </ul>
-                )}
+  <div class="flip-card-wrapper mt-8">
+    <div
+      class="flip-card"
+      id="aboutFlipCard"
+      role="button"
+      tabindex="0"
+      aria-label="Click to reveal about me"
+    >
 
-                {p.techItems && (
-                  <div class="mt-3 flex flex-wrap gap-2">
-                    {p.techItems.map((tech) => (
-                      <span class="rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
+      <!-- ── FRONT ── -->
+      <div class="flip-face flip-front" aria-hidden="false">
+        <div class="front-inner">
+          <div class="front-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </div>
+          <p class="front-label">Click to reveal</p>
+          <p class="front-hint">Who am I?</p>
+          <div class="front-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="front-grid" aria-hidden="true">
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+          <div class="grid-line"></div>
+        </div>
+      </div>
+
+      <!-- ── BACK ── -->
+      <div class="flip-face flip-back" aria-hidden="true">
+        <div class="back-scroll">
+          <div class="space-y-6 body-copy about-content">
+            {paragraphs.map((p) =>
+              typeof p === 'string' ? (
+                <p>{p}</p>
+              ) : (
+                <>
+                  {'text' in p && p.text !== undefined && (
+                    <p>
+                      {p.text}
+                      {p.link && (
+                        <a href={p.link.href} class="subtle-link text-accent"
+                          target="_blank" rel="noreferrer">
+                          {p.link.text}
+                        </a>
+                      )}
+                      {'textAfter' in p && p.textAfter}
+                    </p>
+                  )}
+                  {p.heading && (
+                    <div class="space-y-2">
+                      <p class="font-semibold text-white-soft">{p.heading}</p>
+                      {p.bullets && (
+                        <ul class="list-disc space-y-1 pl-5">
+                          {p.bullets.map((bullet) => <li>{bullet}</li>)}
+                        </ul>
+                      )}
+                      {p.techItems && (
+                        <div class="mt-3 flex flex-wrap gap-2">
+                          {p.techItems.map((tech) => (
+                            <span class="tech-badge">
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )
             )}
-          </>
-        )
-      )}
+          </div>
+        </div>
+
+        <button class="flip-back-btn" id="flipBackBtn" type="button" aria-label="Flip back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          Flip back
+        </button>
+      </div>
+
     </div>
   </div>
 </section>
 
-<style is:global>
-  .reveal-content {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: revealIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+<style>
+  .flip-card-wrapper {
+    perspective: 1200px;
   }
 
-  @keyframes revealIn {
-    to {
-      opacity: 1;
-      transform: translateY(0);
+  .flip-card {
+    position: relative;
+    width: 100%;
+    height: 760px;
+    transform-style: preserve-3d;
+    transition: transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1);
+    cursor: pointer;
+    border-radius: 1rem;
+    outline: none;
+  }
+
+  .flip-card:focus-visible {
+    box-shadow: 0 0 0 2px var(--color-accent, #60a5fa);
+  }
+
+  .flip-card.flipped {
+    transform: rotateY(180deg);
+    cursor: default;
+  }
+
+  .flip-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* ── FRONT ── */
+  .flip-front {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotateY(0deg);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .flip-card:not(.flipped):hover .flip-front {
+    border-color: rgba(96, 165, 250, 0.3);
+    box-shadow: 0 0 40px rgba(96, 165, 250, 0.07),
+                inset 0 0 40px rgba(96, 165, 250, 0.03);
+  }
+
+  .front-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    padding: 2rem;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .front-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    background: rgba(96, 165, 250, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent, #60a5fa);
+    transition: transform 0.3s, background 0.3s;
+  }
+
+  .flip-card:not(.flipped):hover .front-icon {
+    transform: scale(1.1);
+    background: rgba(96, 165, 250, 0.13);
+  }
+
+  .front-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    letter-spacing: 0.01em;
+  }
+
+  .front-hint {
+    font-size: 0.8125rem;
+    color: #475569;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .front-dots {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .front-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(96, 165, 250, 0.4);
+    animation: dotPulse 1.6s ease-in-out infinite;
+  }
+
+  .front-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .front-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dotPulse {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50%       { opacity: 1;    transform: scale(1.3); }
+  }
+
+  .front-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    pointer-events: none;
+    opacity: 0.04;
+  }
+
+  .grid-line { border-right: 1px solid #94a3b8; }
+
+  /* ── BACK ── */
+  .tech-badge {
+    display: inline-block;
+    border-radius: 9999px;
+    border: 1px solid #facc15;
+    background: transparent;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #facc15;
+  }
+
+  .flip-back {
+    transform: rotateY(180deg);
+    background: transparent;
+    border: 1px solid #facc15;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .back-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem 2rem 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.15) transparent;
+  }
+
+  .back-scroll::-webkit-scrollbar       { width: 4px; }
+  .back-scroll::-webkit-scrollbar-track { background: transparent; }
+  .back-scroll::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 2px;
+  }
+
+  .flip-back-btn {
+    flex-shrink: 0;
+    align-self: flex-end;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.75rem 1rem 1rem;
+    font-size: 0.6875rem;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    color: #475569;
+    background: transparent;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 9999px;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .flip-back-btn:hover {
+    color: #94a3b8;
+    border-color: rgba(148, 163, 184, 0.28);
+  }
+
+  /* ══════════════════════════════
+     MOBILE — 3D flip tetap aktif,
+     disesuaikan untuk layar sempit
+  ══════════════════════════════ */
+  @media (max-width: 640px) {
+    .flip-card-wrapper {
+      /* perspective lebih dekat agar efek 3D terasa lebih dramatis di layar kecil */
+      perspective: 800px;
+    }
+
+    .flip-card {
+      /* tinggi auto agar konten back bisa tumbuh, tapi tetap ada min-height untuk front */
+      height: auto;
+      min-height: 260px;
+      /* preserve-3d tetap dipertahankan agar backface-visibility bekerja */
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+
+    .flip-card.flipped {
+      /* rotateY tetap — 3D flip berjalan normal */
+      transform: rotateY(180deg);
+    }
+
+    /* kedua face tetap absolute + backface hidden, sama seperti desktop */
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    /* front: tampilkan dengan min-height agar terlihat di layar kecil */
+    .flip-front {
+      min-height: 260px;
+      position: relative; /* fallback agar wrapper punya tinggi saat belum flip */
+    }
+
+    /* back: absolute seperti desktop, tapi konten bisa scroll */
+    .flip-back {
+      transform: rotateY(180deg);
+      min-height: 260px;
+      /* overflow visible di wrapper, scroll di back-scroll */
+    }
+
+    .back-scroll {
+      padding: 1.5rem 1.25rem 0.5rem;
+      /* pada mobile back butuh tinggi eksplisit agar scrollable */
+      max-height: 70vh;
     }
   }
 </style>
+
+<script>
+  function initFlipCard() {
+    const cardRaw    = document.getElementById('aboutFlipCard');
+    const backBtnRaw = document.getElementById('flipBackBtn');
+
+    if (!cardRaw) return;
+
+    const card: HTMLElement           = cardRaw;
+    const backBtn: HTMLElement | null = backBtnRaw as HTMLElement | null;
+    const frontFace = card.querySelector<HTMLElement>('.flip-front');
+    const backFace  = card.querySelector<HTMLElement>('.flip-back');
+
+    function flipTo(state: 'back' | 'front') {
+      if (state === 'back') {
+        card.classList.add('flipped');
+        card.removeAttribute('tabindex');
+        frontFace?.setAttribute('aria-hidden', 'true');
+        backFace?.removeAttribute('aria-hidden');
+      } else {
+        card.classList.remove('flipped');
+        card.setAttribute('tabindex', '0');
+        backFace?.setAttribute('aria-hidden', 'true');
+        frontFace?.removeAttribute('aria-hidden');
+      }
+    }
+
+    card.addEventListener('click', () => {
+      if (!card.classList.contains('flipped')) flipTo('back');
+    });
+
+    card.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (card.classList.contains('flipped')) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        flipTo('back');
+      }
+    });
+
+    backBtn?.addEventListener('click', (e: MouseEvent) => {
+      e.stopPropagation();
+      flipTo('front');
+    });
+  }
+
+  initFlipCard();
+  document.addEventListener('astro:after-swap', initFlipCard);
+</script>
