@@ -12,72 +12,75 @@ export const site = {
   url: 'https://aprastyo.my.id',
   meta: {
     title: 'Agung Prastyo | Full-Stack Developer & IT Support Jakarta',
-    description: 'Portfolio profesional Agung Prastyo: Pembangunan Web Berbantuan AI, Sokongan IT (IT Support), dan Keselamatan Siber di Jakarta.',
+    description: 'Portofolio Profesional Agung Prastyo: Pengembangan Web Berbasis AI, Dukungan TI (IT Support), dan Keamanan Siber di Jakarta.',
     keywords: 'Agung Prastyo, JANDA-BAPAS, MONALISA, Web Developer Jakarta, Full-Stack Developer, IT Support Jakarta, React.js, Supabase, Vibe Coding, Linux Mint',
     ogImage: '/project-01.webp',
   },
   hero: {
     name: 'Agung Prastyo',
     role: 'Full-Stack Developer & IT Support', // Menggantikan 'Jobless' dengan kata kunci industri
-    tagline: 'Leveraging technical skills and analytical abilities in System Architecture, Web Development, and IT Support based in Jakarta.',
-    contact: 'Open to roles leveraging 5 years of IT Support and modern AI-augmented web development.',
+    tagline: 'Memanfaatkan keterampilan teknis dan kemampuan analitis dalam Arsitektur Sistem, Pengembangan Web, dan Dukungan TI yang berbasis di Jakarta.',
+    contact: 'Terbuka untuk peran yang memanfaatkan 5 tahun pengalaman di bidang IT Support dan pengembangan web modern berbasis AI.',
     avatarSrc: '/favicon.svg',
     avatarAlt: 'Agung Prastyo',
     resumeUrl: '/resume.pdf',
   },
   about: {
     paragraphs: [
-      'Graduate in Informatics Engineering from Universitas Budi Luhur with certifications from Google (IT Support), Fortinet (Cybersecurity), and IBM (Cybersecurity).', // [cite: 4]
-      'Strong understanding of IT Support backed by 5 years of daily hands-on practice in hardware/software troubleshooting and asset management, combined with expertise in AI-Augmented Web Development via vibe coding.', // [cite: 5]
+      'Lulusan Sarjana Komputer (Teknik Informatika) dari Universitas Budi Luhur dengan sertifikasi dari Google (IT Support), Fortinet (Cybersecurity), dan IBM (Cybersecurity).', // [cite: 4]
+      'Memiliki pemahaman kuat mengenai IT Support dengan pengalaman langsung selama 5 tahun dalam troubleshooting perangkat keras/lunak dan manajemen aset, dikombinasikan dengan keahlian dalam Pengembangan Web Berbasis AI melalui pendekatan vibe coding.', // [cite: 5]
       {
-        heading: 'My focus areas',
+        heading: 'Fokus Utama Saya',
         bullets: [
-          'Designing centralized digital platforms to accelerate transparency and efficiency.', // [cite: 16]
-          'Building dynamic Role-Based Access Control (RBAC) and automated document tracking.', // [cite: 18, 19]
-          'Integrating AI and OCR for automatic metadata extraction without manual entry.', // [cite: 30]
+          'Merancang platform digital terpusat untuk mempercepat transparansi dan efisiensi.', // [cite: 16]
+          'Membangun Role-Based Access Control (RBAC) yang dinamis dan pelacakan dokumen otomatis.', // [cite: 18, 19]
+          'Mengintegrasikan AI dan OCR untuk ekstraksi metadata secara otomatis tanpa proses input manual.', // [cite: 30]
         ],
       },
       {
-        heading: 'My Stack',
+        heading: 'Keahlian Teknologi',
         techItems: ['React.js', 'TypeScript', 'Supabase', 'Tailwind CSS', 'Vibe Coding', 'Linux'], // [cite: 52, 54]
       },
     ],
   },
   experiences: [
     {
-      period: 'Nov 2025 - May 2026', // [cite: 15]
-      title: 'AI-Augmented Full-Stack Developer (Intern)', // [cite: 12]
-      company: 'Balai Pemasyarakatan (Bapas) Kelas I Jakarta Barat', // [cite: 13]
-      summary: 'Contributed to the MONALISA information system to digitize manual files into a centralized digital platform.', // [cite: 16]
+      period: 'Nov 2025 - Mei 2026',
+      title: 'Pengelola Fasilitas Umum (Magang)',
+      company: 'Balai Pemasyarakatan (Bapas) Kelas I Jakarta Barat',
+      summary: 'Mendukung operasional umum dan memberikan bantuan teknis untuk digitalisasi layanan instansi.',
       highlights: [
-        'Applied vibe coding consistently using AI as the primary development partner for React components and Supabase integration.', // [cite: 17]
-        'Translated technical instructions into document tracking features and automated task delegation.', // [cite: 18]
-        'Built dynamic Role-Based Access Control (RBAC) based on agency hierarchy to automatically filter roles.', // [cite: 19]
+        'Menyiapkan sarana pendukung kegiatan umum seperti ruang rapat, kendaraan, dan logistik perkantoran.',
+        'Memberikan dukungan teknis dan membantu inisiatif digitalisasi layanan instansi melalui pengembangan sistem.',
+        'Memantau penggunaan fasilitas agar efisien serta mengatur perawatan rutin fasilitas umum.',
+        'Membantu berbagai kebutuhan operasional kantor sehari-hari.',
       ],
-      tech: ['React.js', 'Supabase', 'AI', 'Vibe Coding'], // [cite: 17, 52]
+      tech: ['Dukungan Teknis', 'Operasional', 'Pengembangan Sistem'],
     },
     {
-      period: 'Aug 2020 - Oct 2025', // [cite: 22]
-      title: 'Administrative & IT Staff', // [cite: 20]
-      company: 'Yayasan As-Salam Joglo', // [cite: 21]
-      summary: 'Performed daily hardware and software troubleshooting to ensure smooth operations.', // [cite: 23]
+      period: 'Ags 2020 - Okt 2025',
+      title: 'Staf Administrasi & IT',
+      company: 'Yayasan As-Salam Joglo',
+      summary: 'Melakukan pemecahan masalah perangkat keras dan lunak secara harian serta tugas administratif untuk memastikan kelancaran operasional.',
       highlights: [
-        'Assisted with software installation and updates in the work environment.', // [cite: 24]
-        'Managed inventory and maintenance of IT assets, including computers and network devices.', // [cite: 25]
-        'Implemented basic security practices such as managing access rights for digital documents.', // [cite: 26]
+        'Melakukan pemecahan masalah harian pada hardware dan software untuk memastikan kelancaran operasional.',
+        'Membantu instalasi jaringan dan pembaruan software di lingkungan kerja.',
+        'Mengelola inventaris dan pemeliharaan aset TI menggunakan SnipeIT, termasuk komputer dan perangkat jaringan.',
+        'Menerapkan praktik keamanan dasar seperti mengelola hak akses untuk dokumen digital.',
+        'Bertanggung jawab atas pengarsipan dokumen secara digital dan fisik.',
       ],
-      tech: ['IT Support', 'Hardware Troubleshooting', 'Asset Management'], // [cite: 23, 25, 53]
+      tech: ['IT Support', 'Troubleshooting Hardware', 'SnipeIT', 'Jaringan', 'Manajemen Aset'],
     },
   ],
   featuredProjects: [
     {
-      title: 'MONALISA',
-      period: 'Nov 2025 - May 2026',
-      summary: 'Developed a centralized digital public service platform using an AI-augmented vibe coding approach to replace fragmented manual administrative workflows.',
-      solution: 'Built an integrated monitoring and evaluation system with dynamic role-based access control, digital reporting, and real-time service tracking.',
-      impact: 'Improved transparency, operational efficiency, and administrative accountability through centralized digital workflows and automated monitoring.',
+      title: 'MONALISA - Sistem Informasi Pemasyarakatan',
+      period: 'Nov 2025 - Mei 2026',
+      summary: 'Mengembangkan platform layanan publik digital terpusat menggunakan pendekatan AI-augmented vibe coding untuk menggantikan alur kerja administratif manual yang terfragmentasi.',
+      solution: 'Membangun sistem pemantauan dan evaluasi terintegrasi dengan kontrol akses berbasis peran (RBAC) yang dinamis, pelaporan digital, dan pelacakan layanan secara real-time.',
+      impact: 'Meningkatkan transparansi, efisiensi operasional, dan akuntabilitas administratif melalui alur kerja digital terpusat dan pemantauan otomatis.',
       image: 'project-01.webp',
-      imageAlt: 'MONALISA Monitoring System Interface',
+      imageAlt: 'Antarmuka Sistem Pemantauan MONALISA',
       demoLink: 'https://monalisa-eta.vercel.app/', // [cite: 17]
       techCategories: [
         {
@@ -85,42 +88,42 @@ export const site = {
           items: ['React.js', 'Supabase', 'CRUD', 'Vibe Coding'],
         },
         {
-          category: 'Core Features',
-          items: ['RBAC', 'Real-time Monitoring', 'Digital Services'],
+          category: 'Fitur Utama',
+          items: ['RBAC', 'Real-time Monitoring', 'Layanan Digital'],
         },
       ],
     },
     {
-      title: 'Digital Archive System for Incoming Mail', // [cite: 29]
-      period: 'Apr 2026 - May 2026', // [cite: 29]
-      summary: 'Designed the entire system architecture using an AI vibe coding approach as the main navigator.', // [cite: 29]
-      solution: 'Built a digital incoming mail archiving system that eliminates manual recording through AI and OCR integration for automatic metadata extraction.', // [cite: 30]
-      impact: 'Accelerated the completion of document management features, full-text search, and cloud storage.', // [cite: 31]
+      title: 'Sistem Arsip Digital Penerimaan Surat', // [cite: 29]
+      period: 'Apr 2026 - Mei 2026', // [cite: 29]
+      summary: 'Merancang arsitektur keseluruhan sistem menggunakan pendekatan AI vibe coding sebagai navigator utama.', // [cite: 29]
+      solution: 'Membangun sistem pengarsipan surat masuk digital yang mengeliminasi pencatatan manual melalui integrasi AI dan OCR untuk ekstraksi metadata secara otomatis.', // [cite: 30]
+      impact: 'Mempercepat penyelesaian fitur manajemen dokumen, pencarian teks penuh (full-text search), dan penyimpanan cloud.', // [cite: 31]
       image: 'project-02.webp',
-      imageAlt: 'Digital Archive System Dashboard', // [cite: 29]
+      imageAlt: 'Dasbor Sistem Arsip Digital', // [cite: 29]
       demoLink: 'https://janda-bapas.vercel.app/', // [cite: 29]
       techCategories: [
         {
           category: 'Stack',
-          items: ['React.js', 'Supabase', 'AI Extraction', 'OCR'], // [cite: 29]
+          items: ['React.js', 'Supabase', 'Ekstraksi AI', 'OCR'], // [cite: 29]
         },
         {
-          category: 'Approach',
-          items: ['Vibe Coding', 'Relational Database Design'], // [cite: 29]
+          category: 'Pendekatan',
+          items: ['Vibe Coding', 'Desain Database Relasional'], // [cite: 29]
         },
       ],
     },
   ],
   projectArchivePage: {
-    title: 'All projects',
-    description: 'Project archive: dates, roles, and technologies across web development, IoT, and IT support engagements.',
-    intro: 'A concise archive of academic projects and professional development work.',
+    title: 'Semua Proyek',
+    description: 'Arsip proyek: periode, peran, dan teknologi mencakup berbagai proyek pengembangan web, IoT, dan IT support.',
+    intro: 'Arsip ringkas dari proyek akademis dan pekerjaan profesional.',
   },
   projectArchive: [
-    { date: '2026', project: 'Digital Archive System', role: 'Full-Stack', techStack: 'React.js, Supabase, AI, OCR' }, // [cite: 29]
-    { date: '2025', project: 'Portfolio Website', role: 'Frontend', techStack: 'HTML, CSS, JavaScript, Responsive Design' }, // [cite: 41, 42]
-    { date: '2025', project: 'IoT Mini Vehicle Prototype', role: 'Hardware & Web', techStack: 'Microcontroller, Sensor Fusion' }, // [cite: 32]
-    { date: '2024', project: 'Internal Asset Management', role: 'Full-Stack', techStack: 'IoT, NFC, CRUD' }, // [cite: 36, 37]
+    { date: '2026', project: 'Sistem Arsip Digital Penerimaan Surat', role: 'Full-Stack', techStack: 'React.js, Supabase, AI, OCR' }, // [cite: 29]
+    { date: '2025', project: 'Website Portofolio', role: 'Frontend', techStack: 'HTML, CSS, JavaScript, Responsive Design' }, // [cite: 41, 42]
+    { date: '2025', project: 'Prototipe IoT Mini Vehicle', role: 'Hardware & Web', techStack: 'Mikrokontroler, Sensor Fusion' }, // [cite: 32]
+    { date: '2024', project: 'Manajemen Aset Internal', role: 'Full-Stack', techStack: 'IoT, NFC, CRUD' }, // [cite: 36, 37]
   ],
   contact: {
     email: 'agungprastyo052@gmail.com', // [cite: 2]
